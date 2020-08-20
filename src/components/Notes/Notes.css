@@ -1,0 +1,22 @@
+.Notes .AutoSizerWrapper {
+  flex: 1 1 auto;
+}
+
+.Notes .List {
+  border: 1px solid #e0e0e0;
+}
+
+.Notes .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 25px;
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.Notes .fab {
+  position: absolute;
+  bottom: 2em;
+  right: 2em;
+}
