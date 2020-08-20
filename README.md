@@ -1,227 +1,326 @@
-# Specifications
+**Quick @TODO**
 
-## Items to be classified / quick todos
+- Where necessary:
 
-- Where necessary :
-  - Define Routes
-  - Define transitin effect
+  - Define transition/animation effects
+
+- Multiple note selection to :
+
+  - apply/remove tags
+  - archive
+  - place in the trash
+
+- Define functionality, routes and views for :
+  - `Share` a note
+  - `Change tags` on a note
+  - Admin/CRUD on tags
 
 ---
 
+# About this app project
+
+Create a Google Keep clone which brings the missing functionalities badly needed by user with several hundreds notes.
+
+This project will either show that these limitations can be surpassed, or on the contrary, help to understand the technical (or other) backgrounds for these limitations.
+
+## Current limitations found in Google Keep
+
+- Can't view All pinned notes only into one list of notes
+- Can't search using more than 1 tag
+- Search terms are not highlighted within the notes contents that end up in the result list of notes
+- Can't search for an exact phrase : any notes with any of the words in the search term will be pulled into the result list of notes
+- Can't use ANY kind of text formatting to compose notes (come on guys !!!!)
+- Can't shrink notes to a tiny height, which would allow for shorter scrolling 'distances' when looking for notes
+- Initial load time at app launch is really ugly and the app crashes very often during this launching sequence (it crashes at launch in about once in 8 to 10 times)
+- And the list goes on and on...
+
+---
+
+# App Specifications
+
 ## Progressive Web App
 
-- [ ] installable
-- [ ] offline first
-- [ ] mobile-first responsive design
+- installable
+- offline first
+- mobile-first responsive design
 
 ## Data persistence
 
-- [ ] firebase for signing in Google users only
-- [ ] firestore for storing user's notes collection data
-- [ ] localStorage for offline storage
-- [ ] syncronizes with firestore whenever a connection is available
+- firebase for signing in Google users only
+- firestore for storing user's notes collection data
+- localStorage for offline storage
+- syncronizes with firestore whenever a connection is available
 
-## Routing
+## About Night Mode
 
-- [ ] `Default/CatchAll route` is `Home - Signed off`
-- [ ] **Route** : `/signed-off`
-- [ ] All routes and functionalities are protected by `isSignedIn`
-- [ ] To be clear : if user is not signed in, the `/signed-off` route is all user can access
+- The App toggles in and out of night mode automatically, according to the daylights in user's location
+  - must request user's permission for their location
 
-## Launching the app
+## About `tags`
+
+- each note can have 0 or more `tags`
+- `tags` help :
+  - classify notes into collections of tagged notes
+  - find collections of notes
+
+## Accessing the app contents
+
+- All routes and functionalities are protected by authentication
+  - So, to be clear :
+    - if user is not signed in, the Google Sign-in form is the accessible content
+    - until user signs in, no other routes will be accessible
+
+## Once `isSignedIn=true`
+
+- The App Toolbar is displayed
 
 - While the `notes collection` is being requested/synchronized from local/remote storage
 
   - the `title bar` displays the name of the app
-  - the `notes list view` is hidden, **instead** a `circular loader view` is displayed
+  - the `notes list view` is hidden. **Instead of it**, a `circular loader view` is displayed
 
 - Once the `notes collection` is available :
-  1. the `notes list view` appears in the `main view area`
-  2. `title bar view` is hidden by the `search bar view`, **unless** the `settings collection` are set to display the `pinned notes` on app launch, in which case :
+
+  1. the `circular loader view` hides
+  2. the `notes list view` appears in the `main view` area
+  3. `title bar view` is hidden by the `search bar view`, **unless** the `settings` specify to display the `pinned notes` on app launch, in which case :
+
   - title `Pinned notes` is displayed in the `title bar view`
   - `search icon button` is displayed
   - `search textfield` is hidden
 
-## Night Mode
+## Composition of the `AppToolbar`
 
-- [ ] The App toggles in and out of night mode automatically, according daylight corresponding to user's location
+### Avatar button
 
-## Avatar
+`Google User profile picture` is displayed in the `avatar view` on the right top corner
 
-- [ ] `Google User profile picture` is displayed in the `avatar view`
-  - `onClick` : a menu displays a single option => `Sign out`, which takes user back to the `Home Signed out` route thanks to `Default/CatchAll route`
+- `onClick` : a menu displays a single option => `Sign out`, which takes user back to the to the `default route`
 
-## Notes list display modes toggle button
+### Display modes - button
 
-- [ ] `Notes list display mode toggle button` is used to switch between `standard mode` and `preview mode`
-  - [ ] in both modes, notes are stacked in a column formation
-  - [ ] `display mode` persists
-  - [ ] In `standard mode`
-    - [ ] full notes are displayed
-      - full height
-      - notes height in the list then varies from one note to the next
-  - [ ] In `preview mode`
-    - [ ] first couple of lines only are displayed
-    - [ ] every note in the list then takes the exact same height
-    - [ ] ellipsis masks overflown text
-    - [ ] in this mode **only**, notes can be dragged and dropped to change
-      - their order persists
+This button toggles `notes list view` display modes. Sits to the left of the avatar button.
 
-## Hamburger menu
+- `onClick` : switches between `standard mode` and `preview mode`
+- _transition effect_ : `easeIn scaleY`
+- in both modes, notes are stacked in a column formation
+- `Notes list display mode` persists
+- In `standard mode`
+  - full notes are displayed
+    - full height
+    - notes height in the list then varies from one note to the next
+- In `preview mode`
+  - only first couple of lines of each note are displayed
+  - ellipsis masks overflown text
+  - every note in the list then takes the exact same height
+  - in this mode **only**, notes can be dragged and dropped to change their order
+    - this order persists
 
-- [ ] `onClick`
+### Regarding the title bar and the search textfield
+
+- if the `searchTextfield` is hidden, and if the `searchIconButton` is pressed by the user, the `searchTextfield` slide out to take available horizontal space, hiding the `titleBar` by covering it up.
+
+### Hamburger button
+
+Sits on the top left corner.
+
+- `onClick` :
   - toggles `drawer panel` in and out of the `viewport`
   - _transition effect_ : `easeIn sliding`
 
-## Drawer panel
+## Composition of the `Drawer Panel`
 
-### Navigation transition from drawer panel
+Buttons are listed in column formation (top to bottom) :
 
-- [ ] Once a button in the `drawer panel` is clicked :
+- **Notes**
+
+  - `onClick` : /notes/all
+
+- **Pinned**
+
+  - `onClick` : /notes/pinned
+
+- **Tags**
+
+  - lists a button for each `tag` the user has created
+    - for each button with `tag name`, `onClick` : /notes/:tagId
+
+- **Archive**
+
+  - `onClick` : /notes/archive
+
+- **Trash**
+
+  - `onClick` : /notes/trash
+
+- **Settings**
+  - `onClick` : /settings
+
+### Navigating from the `drawer panel`
+
+- Once a button in the `drawer panel` is clicked :
+
   1. the `drawer panel` slides out of viewport
-  - _transition effect_ : `easeOut sliding`
-  2. **only then** does the `main view` area starts loading the `notes collection` in the `notes list view`
-  - _transition effect_ : subtle faded slide up
 
-### Contents of the drawer panel view
+  - _transition effect_ : `easeOut slide left`
 
-Buttons and section dividers from top to bottom :
+  2. **only then**, the selected `notes collection` start loading into the `notes list view` in the `main view` area
 
-- [ ] **Notes** : displays all notes -> the full search bar [textfield + search icon adornment] is displayed
+  - _transition effect_ of `main view` area: `subtle fading in / sliding up`
 
----
+## Routing
 
-- [ ] **Pinned** : displays all pinned notes only
+### Route : `/signed-off`
 
----
+- this is the Default / Catch All / 404 route.
 
-- [ ] **Tags section**
-  - lists a button for each `tag name` the user has created
-  - clicking on a `tag name` button :
-    - displays the `notes collection` corresponding to the `tag name`
-    - displays the `tag name` in the `title bar`
-    - hides the `search bar textfield`
-    - displays the `search icon button`
-    - if the `search icon button` is pressed, the `search bar textifield` slide out to take available horizontal space, covering/hiding the `tag name` in the `title bar`
+### About the various routes starting with `/notes`
 
----
+- any of the `/notes` routes listed below must reuse the same `notes list view` component.
+- for each note in the `notes list view`
+  - `onClick` :
+    - The height of note goes full screen
+    - _transition effect_ : morphing into the `/note/:noteId` route for note edition
 
-- [ ] **Archives**
+#### Route : `/notes/all`
 
-  - displays `archived notes`
-  - `archived notes` are not displayed anywhere but here
+- displays all the notes in the `notes collection`, apart from `archived` and `trashed` notes
+- effects on `AppToolbar` :
+  - `titleBar`: hidden
+  - `searchIconButton`: hidden
+  - `searchTextfield`: displayed
 
-* [ ] **Trash**
-  - Message to user
-    - "deleted notes will be stored in the trash for 30 days"
-    - the message appears on top of the list, making the list slide down when it appears
-    - user can click the message to have it disappear
-  - displays all notes that were deleted in the previous 30 days or less
-  - notes are displayed in 'preview mode` and are stacked in column as a simple list
-  - through multiple selection :
-    - notes can be restored
-    - notes can be permantly deleted
+#### Route : `/notes/pinned`
 
----
+- displays the pinned `notes collection` only
+- effects on `AppToolbar` :
+  - `titleBar`: displays title `Pinned notes`
+  - `searchIconButton`: displayed
+  - `searchTextfield`: hidden
 
-- [ ] **Settings** : displays the `settings view` in the `main view` area
+#### Route : `/notes/:tagId`
 
-# Routes
+- displays the `notes collection` corresponding to the `tagId` only
+- effects on `AppToolbar` :
 
-## All notes view
+  - `titleBar`: displays title `:tagName`
+  - `searchIconButton`: displayed
+  - `searchTextfield`: hidden
 
-- [ ] **Route** : /all
+#### Route : `/notes/archive`
 
-## Pinned notes view
+- displays the archived `notes collection` only
+- `archived notes` are not displayed anywhere else but here in this route
+- effects on `AppToolbar` :
 
-- [ ] **Route** : /pinned
+  - `titleBar`: displays title `archive`
+  - `searchIconButton`: displayed
+  - `searchTextfield`: hidden
 
-## Tag notes view
+#### Route : `/notes/trash`
 
-- [ ] **Route** : /tag/:tagId
+- displays the trashed `notes collection` only
+- `trashed notes` are not displayed anywhere else but here in this route
+- effects on `AppToolbar` :
+  - `titleBar`: displays title `trash`
+  - `searchIconButton`: displayed
+  - `searchTextfield`: hidden
+- displays all notes that were deleted in the previous 30 days or less
 
-## Archive view
+- **Message to user**
 
-- [ ] **Route** : /archive
-- [ ] notes can be unarchived by pressing the `archive toggle button`
+  - "deleted notes will be stored in the trash for 30 days"
+  - the message appears on top of the list, making the list slide down when it appears
+  - user can click the close button on the message to make it disappear
 
-## Trash view
+- notes in this route are :
 
-- [ ] **Route** : /trash
+- through multiple selection :
+  - notes can be restored
+  - notes can be permantly deleted
 
-## Settings view
+#### Route : `/notes/search-results`
 
-- [ ] **Route** : /settings
-- [ ] Has a back arrow to return to previous view that was displayed in the `main view` area
-- [ ] Options
-  - **Night mode**
-    - User can toggle automatic night mode
-    - Manual toggle ?
-  - **Notes**
-    - Toggle top/bottom : new notes are added at the top/bottom of the list
-  - **App launch**
-    - Default notes to be displayed : pinned note OR all notes
+- displays the `notes collection` corresponding to the `search filters`
 
-## Searching for notes
+- effects on `AppToolbar` :
 
-- [ ] All found instances of `search term` :
+  - `titleBar`: hidden
+  - `searchIconButton`: hidden
+  - `searchTextfield`: displayed
+
+- all found instances of `search term` :
+
   - are to be highlighted across all notes in the `notes list` found in the `main view` area
   - can be cycled through, back and forth
-- [ ] Possible `search filters` :
-  - `pinned` (optional : boolean)
-  - `tags` (optional : 0 or more)
+
+- Possible `search filters` :
   - `search term` :
     - 1 or more words/strings
     - exact match only
+  - `pinned` (optional : boolean)
+  - `tags` (optional : 0 or more)
 
-### Tags
+#### Route : `/note/:noteId`
 
-- [ ] `Tags` help find/classify individual notes
-- [ ] Notes can have 0 or more `tags`
+- displays the note with `id=noteId` for edition
 
-## Home - Signed off
+##### Markdown editor
 
-- [ ] **Route** : /signed-off
-- [ ] displays Google Sign In form in none-pop format
+- Notes are written in markdown and displayed as HTML
+- Only Markdown is editable
 
-### Clicking on a note in a notes list view
+  - [implement the image renderer](https://www.newline.co/@dmitryrogozhny/how-to-render-markdown-in-react-with-react-markdown--5d1c3849)
+  - URL links should open \_blank not on same browser tab as this app
 
-- [ ] The height of note goes full screen
-- _transition effect_ : morphing into the `Note - edition` route
+- the `markdown text` area scrolls overflown content
+- images are inline with text, not on top of the top like Google Keep
 
-## Editing a note
+##### Note Toolbar
 
-- [ ] **Route** : /note/:noteId
+- located on top of the `markdown text` area as a row, from left to right :
+- `Pin Icon` : toggles `pinned` / `unpinned` state
+- `Archive Icon` : toggles `archived` / `unarchived` state
+- `Preview Icon` : toggles between displaying as HTML or as raw Markdown
+- `Close Icon` :
+  - closes the note
+  - the user is redirected to the previous `notes list` found in the navigation history
 
-- [ ] the `markdown text area` scrolls overflown content
-- [ ] images are inline with text, not on top of the top like Google Keep
+##### Menu button `vertical 3-dots`
 
-- [ ] **Note Toolbar**
-  - [ ] located on top of the `markdown text area` as a row
-  - [ ] `Pin Icon` : toggles `pinned` / `unpinned` state
-  - [ ] `Archive Icon` : toggles `archived` / `unarchived` state
-  - [ ] `Preview Icon` : toggles between displaying as HTML or as raw Markdown
-- [ ] **Menu options**
-  - [ ] located under the `markdown text area` by clicking on the `vertical 3-dots menu button`
-  - [ ] `Share options` : captures email address and sends invitation @TODO: view to be defined
-  - [ ] `Get link` : permalink is copied into clipboard
+- located under the `markdown text` area, on the right bottom corner
+- `onClick` : the following options appear
+  - `Share options` : captures email address and sends invitation
+  - `Get link` : permalink is copied into clipboard
     - a `snackbar notification` informs the user it is now in clipboard
-  - [ ] ??? `Make a copy` : duplicates the current note
-  - [ ] `Change tags` : apply existing or new `tags` @TODO: view to be defined
-    - [ ] New `tags` can be created on the fly
-  - [ ] `Remove` : places note in the trash bin for 30 days
-    - after pressing the `remove option`, the user is navigated back to the `Home - Signed In` route
+  - ??? `Make a copy` : duplicates the current note
+  - `Change tags` : apply existing or new `tags`
+    - New `tags` can be created on the fly
+  - `Remove` : places note in the trash for 30 days
+    - after pressing the `remove option`, the user is redirected to the previous `notes list` found in the navigation history
 
-### Markdown
+#### Route : `/settings`
 
-- [ ] Notes are composed in markdown and displayed as HTML
-- [ ] Only Markdown is editable
-- [ ] [implement the image renderer](https://www.newline.co/@dmitryrogozhny/how-to-render-markdown-in-react-with-react-markdown--5d1c3849)
-- [ ] URL links should open \_blank not on same browser tab as this app
+- displays the `settings view` in the `main view` area
+- has a back arrow to return to the view that was previously displayed in the `main view` area
+- **Options**
+  - **Night mode**
+    - user can `toggle automatic night mode`
+    - manual toggle ?
+  - **Notes**
+    - toggle `top/bottom` : new notes are added at the `top/bottom` of the list
+  - **App launch**
+    - default notes to be displayed : `pinned` note OR `all` notes
 
-## Adding a new one
+#### Home - Signed off
 
-- [ ] **Route** : /note/:noteId
+- **Route** : /signed-off
+- displays Google Sign In form in none-pop format
+
+## Adding a new note
+
+- this is done by clicking on the FAB (+) button on the lower right corner of the viewport, present in any `notes list view`, apart from `trashed` and `archived` routes
+- `onClick` : `/note/:noteId`
 
 ---
 
